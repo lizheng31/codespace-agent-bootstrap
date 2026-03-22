@@ -1,0 +1,52 @@
+# Codespace Agent Bootstrap
+
+用 GitHub Codespaces 在几分钟内拉起 Claude Code + Codex CLI 工作环境。
+
+## 目标
+
+打开 Codespace 后，执行一条命令即可完成：
+- 基础依赖安装
+- Claude Code CLI 安装/检查
+- Codex CLI 安装/检查
+- 常用工具安装（git, gh, jq, ripgrep 等）
+- 环境变量模板生成
+
+## 最快使用方式
+
+### 方式 1：在 Codespace 里一条命令
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/<YOUR_GITHUB>/<YOUR_REPO>/main/scripts/install.sh | bash
+```
+
+### 方式 2：Codespaces 自动执行
+
+本仓库自带 `.devcontainer/devcontainer.json`，创建 Codespace 后会自动跑：
+
+```bash
+bash /workspaces/<repo>/scripts/install.sh
+```
+
+## 支持内容
+
+- Claude Code
+- Codex CLI
+- GitHub CLI
+- 常用 shell 工具
+- `.env.example`
+- `bootstrap-check.sh` 自检
+
+## 认证建议
+
+在 GitHub Codespaces Secrets 中配置：
+
+- `ANTHROPIC_API_KEY`
+- `OPENAI_API_KEY`
+- `GITHUB_TOKEN`（可选，通常 Codespace 自带登录）
+
+## 下一步
+
+1. 把这个目录推到 GitHub
+2. 替换 README 里的 `<YOUR_GITHUB>/<YOUR_REPO>`
+3. 创建 Codespace
+4. 执行一条 curl
