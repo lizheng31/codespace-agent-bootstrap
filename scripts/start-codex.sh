@@ -6,11 +6,6 @@ if ! command -v codex >/dev/null 2>&1; then
   exit 1
 fi
 
-if [ -z "${OPENAI_API_KEY:-}" ]; then
-  echo "OPENAI_API_KEY is missing"
-  exit 1
-fi
-
 if [ ! -d .git ]; then
   git init >/dev/null 2>&1 || true
 fi

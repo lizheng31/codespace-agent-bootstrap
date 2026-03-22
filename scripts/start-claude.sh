@@ -7,7 +7,8 @@ if ! command -v claude >/dev/null 2>&1; then
 fi
 
 if [ -z "${ANTHROPIC_API_KEY:-}" ]; then
-  echo "ANTHROPIC_API_KEY is missing"
+  echo "ANTHROPIC_API_KEY is missing. Claude path is optional in this auth-first template."
+  echo "Use Codex auth flow instead: bash scripts/auth-codex.sh"
   exit 1
 fi
 

@@ -1,6 +1,6 @@
 # Codespace Agent Bootstrap
 
-用 GitHub Codespaces 在几分钟内拉起 Claude Code + Codex CLI 工作环境。
+用 GitHub Codespaces 在几分钟内拉起 Codex CLI（auth 登录优先）+ Claude Code（可选 API key）工作环境。
 
 ## 目标
 
@@ -9,7 +9,7 @@
 - Claude Code CLI 安装/检查
 - Codex CLI 安装/检查
 - 常用工具安装（git, gh, jq, ripgrep 等）
-- 环境变量模板生成
+- auth-first 登录流程与环境变量模板生成
 
 ## 最快使用方式
 
@@ -38,11 +38,20 @@ bash /workspaces/<repo>/scripts/install.sh
 
 ## 认证建议
 
-在 GitHub Codespaces Secrets 中配置：
+### Codex CLI（推荐）
+优先使用网页登录 / device auth：
 
+```bash
+bash scripts/auth-codex.sh
+```
+
+### Claude Code（可选）
+如果你有 `ANTHROPIC_API_KEY`，再使用 Claude 路径。
+
+### 可选 Secrets
 - `ANTHROPIC_API_KEY`
 - `OPENAI_API_KEY`
-- `GITHUB_TOKEN`（可选，通常 Codespace 自带登录）
+- `GITHUB_TOKEN`
 
 ## 下一步
 
@@ -56,7 +65,7 @@ bash /workspaces/<repo>/scripts/install.sh
 
 ```bash
 bash scripts/doctor.sh
-bash scripts/start-claude.sh
+bash scripts/auth-codex.sh
 bash scripts/start-codex.sh
 ```
 
