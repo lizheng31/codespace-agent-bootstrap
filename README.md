@@ -82,3 +82,19 @@ bash scripts/start-codex.sh
 - 用 Claude Code 跑一次性任务
 - 用 Codex CLI 跑一次性任务
 - 在 Codespace 里直接开发/调试/提交
+
+
+## 一键启动
+
+进入 Codespace 后直接运行：
+
+```bash
+bash scripts/quickstart.sh
+```
+
+然后执行：
+
+```bash
+bash scripts/auth-codex.sh
+bash scripts/start-codex.sh
+```
