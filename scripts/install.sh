@@ -9,7 +9,7 @@ has() {
   command -v "$1" >/dev/null 2>&1
 }
 
-need_sudo() {
+as_root() {
   if command -v sudo >/dev/null 2>&1; then
     sudo "$@"
   else
@@ -17,14 +17,21 @@ need_sudo() {
   fi
 }
 
-install_apt_base() {
-  if ! has apt-get; then
-    log "apt-get not found; cannot continue on this image"
-    exit 1
+detect_pkg_manager() {
+  if has apt-get; then
+    echo apt
+    return
   fi
+  if has apk; then
+    echo apk
+    return
+  fi
+  echo unknown
+}
 
-  need_sudo apt-get update -y
-  need_sudo apt-get install -y \
+install_base_apt() {
+  as_root apt-get update -y
+  as_root apt-get install -y \
     ca-certificates \
     curl \
     git \
@@ -36,18 +43,78 @@ install_apt_base() {
     pkg-config \
     python3 \
     python3-pip \
-    xz-utils
+    xz-utils \
+    bash
 }
 
-install_node() {
+install_base_apk() {
+  as_root apk update
+  as_root apk add \
+    bash \
+    curl \
+    git \
+    jq \
+    unzip \
+    ripgrep \
+    fd \
+    build-base \
+    pkgconf \
+    python3 \
+    py3-pip \
+    xz \
+    nodejs \
+    npm
+}
+
+install_base() {
+  pm=$(detect_pkg_manager)
+  case "$pm" in
+    apt)
+      log "detected apt-get"
+      install_base_apt
+      ;;
+    apk)
+      log "detected apk"
+      install_base_apk
+      ;;
+    *)
+      log "no supported package manager found (need apt-get or apk)"
+      exit 1
+      ;;
+  esac
+}
+
+install_node_apt() {
   if has node && has npm; then
     log "node already installed: $(node -v), npm: $(npm -v)"
     return
   fi
 
   log "installing nodejs + npm via NodeSource"
-  curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
-  need_sudo apt-get install -y nodejs
+  curl -fsSL https://deb.nodesource.com/setup_22.x | as_root bash -
+  as_root apt-get install -y nodejs
+}
+
+install_node() {
+  pm=$(detect_pkg_manager)
+
+  if has node && has npm; then
+    log "node already installed: $(node -v), npm: $(npm -v)"
+    return
+  fi
+
+  case "$pm" in
+    apt)
+      install_node_apt
+      ;;
+    apk)
+      log "node installed via apk base packages"
+      ;;
+    *)
+      log "cannot install node on unsupported package manager"
+      exit 1
+      ;;
+  esac
 
   if ! has node || ! has npm; then
     log "node/npm install failed"
@@ -64,12 +131,10 @@ install_claude() {
   fi
 
   log "installing Claude Code CLI"
-  npm install -g @anthropic-ai/claude-code
-
-  if has claude; then
-    log "claude installed"
+  if npm install -g @anthropic-ai/claude-code; then
+    log "claude install command completed"
   else
-    log "Claude install failed"
+    log "Claude install failed; continuing"
   fi
 }
 
@@ -109,7 +174,7 @@ write_helper() {
 set -euo pipefail
 
 echo "== agent bootstrap check =="
-for bin in git node npm python3 pip3 gh jq rg curl; do
+for bin in git node npm python3 pip3 jq rg curl; do
   if command -v "$bin" >/dev/null 2>&1; then
     echo "[ok] $bin -> $(command -v $bin)"
   else
@@ -135,7 +200,7 @@ EOF2
 
 main() {
   log "starting install"
-  install_apt_base
+  install_base
   install_node
   install_claude
   install_codex
