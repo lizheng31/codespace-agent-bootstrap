@@ -50,3 +50,26 @@ bash /workspaces/<repo>/scripts/install.sh
 2. 替换 README 里的 `<YOUR_GITHUB>/<YOUR_REPO>`
 3. 创建 Codespace
 4. 执行一条 curl
+
+
+## 快速验证
+
+```bash
+bash scripts/doctor.sh
+bash scripts/start-claude.sh
+bash scripts/start-codex.sh
+```
+
+## 推荐仓库 Secrets
+
+在 GitHub 仓库 / Codespaces Secrets 中设置：
+
+- `ANTHROPIC_API_KEY`
+- `OPENAI_API_KEY`
+- `GITHUB_TOKEN`（可选）
+
+## 启动后你能直接干什么
+
+- 用 Claude Code 跑一次性任务
+- 用 Codex CLI 跑一次性任务
+- 在 Codespace 里直接开发/调试/提交
